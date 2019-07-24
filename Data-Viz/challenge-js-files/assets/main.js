@@ -1,90 +1,56 @@
-var countryArray = [];
-var countryCrimeDataArray = [];
-var yearsArray = [];
+var yearsStaticData = [];
+var dataSet1 = [];
 
-function seperateCountryFromData(){
+function getRandomRgb() {
+    let num = Math.round(0xffffff * Math.random());
+    let r = num >> 16;
+    let g = (num >> 8) & 255;
+    let b = num & 255;
+    return "rgb(" + r + ", " + g + ", " + b + ")";
+}
 
-let data = document.getElementsByTagName("tbody");
-for (let i = 1; i < data[0].rows.length; i ++){
-    pushInCountryArray(data[0].rows[i].cells[1].innerText);
+function getYearsOutOfData() {
+    for (let i = 2; i < table1.rows[1].cells.length; i++) {
+        yearsStaticData[i - 2] = table1.rows[1].cells[i].innerHTML;
     }
-
 }
-seperateCountryFromData();
+getYearsOutOfData();
 
-let data = document.getElementsByTagName("tbody");
-for (let i = 1; i < data[0].rows.length; i ++){
-    createCleanNumber(data[0].rows[i]);
-}
-
-function createCleanNumber(messyNumber){
-    for (let i = 2; i < messyNumber.cells.length; i++){
-        let number = messyNumber.cells[i].innerText;
-        pushCrimeDataArray(parseFloat(number.replace(/,/g, '.')));
+function createJsonFile() {
+    for (let i = 2; i < table1.rows.length; i++) {
+        let randomRGB = getRandomRgb();
+        let tableRow = table1.rows[i];
+        let country = tableRow.cells[1].innerHTML;
+        let data = [];
+        let rowJson = {
+            label: country,
+            fill: false,
+            borderColor: randomRGB,
+            data: data
+        };
+        for (let i = 2; i < tableRow.cells.length; i++) {
+            data.push(parseInt(tableRow.cells[i].innerHTML));
         }
-}
-
-function pushInCountryArray(country){
-    countryArray.push(country);
-}
-
-function pushCrimeDataArray(crimeData){
-    countryCrimeDataArray.push(crimeData);
-}
-
-function seperateYearsFromData(){
-    let table1 = document.getElementById('table1');
-
-    for (i = 2; i < table1.rows[1].cells.length; i ++){
-    pushYearsInArray(table1.rows[1].cells[i].innerText);
+        dataSet1.push(rowJson);
     }
 }
-seperateYearsFromData();
+createJsonFile();
 
-function pushYearsInArray(years){
-    yearsArray.push(years);
+function createCanvasAndInsertToDom() {
+    const canvas1 = document.createElement("canvas");
+    canvas1.id = "myChart1";
+    table1.parentNode.insertBefore(canvas1, table1);
+    const ctx = document.getElementById("myChart1").getContext("2d");
+    ctx.canvas.width = window.innerWidth;
+    ctx.canvas.height = 1000;
+
+    new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: yearsStaticData,
+            datasets: dataSet1
+        },
+        options: {}
+    });
 }
-
-
-
-new Chart(document.getElementById("line-chart"), {
-    type: 'line',
-    data: {
-      labels: yearsArray,
-      datasets: [{ 
-          data: [86,114,106,106,107,111,133,221,783,2478],
-          label: "Africa",
-          borderColor: "#3e95cd",
-          fill: false
-        }, { 
-          data: [282,350,411,502,635,809,947,1402,3700,5267],
-          label: "Asia",
-          borderColor: "#8e5ea2",
-          fill: false
-        }, { 
-          data: [168,170,178,190,203,276,408,547,675,734],
-          label: "Europe",
-          borderColor: "#3cba9f",
-          fill: false
-        }, { 
-          data: [40,20,10,16,24,38,74,167,508,784],
-          label: "Latin America",
-          borderColor: "#e8c3b9",
-          fill: false
-        }, { 
-          data: [6,3,2,2,7,26,82,172,312,433],
-          label: "North America",
-          borderColor: "#c45850",
-          fill: false
-        }
-      ]
-    },
-    options: {
-      title: {
-        display: true,
-        text: 'World population per region (in millions)'
-      }
-    }
-  });
-
-
+createCanvasAndInsertToDom();
