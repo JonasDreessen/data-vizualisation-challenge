@@ -54,3 +54,24 @@ function createCanvasAndInsertToDom() {
     });
 }
 createCanvasAndInsertToDom();
+
+function getDataFromDatapointsUrl(){
+const proxyurl = "https://cors-anywhere.herokuapp.com/";
+const url = 'https://canvasjs.com/services/data/datapoints.php)';
+
+fetch(proxyurl + url)
+.then(response => response.text())
+.then(contents => createArrayForUpdatingData(contents));
+}
+getDataFromDatapointsUrl();
+//setInterval(getDataFromDatapointsUrl, 100);
+
+var updatingDataArray = [];
+
+function createArrayForUpdatingData(updatingData){
+    updatingDataArray.push(updatingData);
+}
+
+console.log(updatingDataArray);
+
+
