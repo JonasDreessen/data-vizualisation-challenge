@@ -56,28 +56,38 @@ function createCanvasAndInsertToDom() {
 createCanvasAndInsertToDom();
 
 
-function getDataFromDatapointsUrl(){
-const proxyurl = "https://cors-anywhere.herokuapp.com/";
-const url = 'https://canvasjs.com/services/data/datapoints.php)';
+function getDataFromDatapointsUrl() {
+    var url = 'http://localhost:3000/Data-Viz/challenge-js-files/assets/api.php';
 
-fetch(proxyurl + url)
-.then(response => response.text())
-.then(contents => createArrayForUpdatingData(contents));
+    fetch(url)
+        .then(response => response.text())
+        .then(contents => createArrayForUpdatingData(contents));
 }
-
+//setInterval(getDataFromDatapointsUrl,100);
 getDataFromDatapointsUrl();
 
-// setInterval(getDataFromDatapointsUrl, 100);
 var updatingDataArray = [];
-
-function createArrayForUpdatingData(updatingData){
+var labels = [];
+var values = [];
+// setInterval(getDataFromDatapointsUrl, 100);
+function createArrayForUpdatingData(updatingData) {
     updatingDataArray.push(updatingData);
 }
 
-console.log(updatingDataArray)
+updatingDataArray.forEach(function (val) {
+    console.log(val);
+    //labels.push(val[0]);
+    //values.push(val[1]);
+});
 
 
-
-
-
-
+new Chart(document.getElementById("chart"), {
+    type: "line",
+    data: {
+        labels: labels,
+        datasets: [{
+            data: values
+        }]
+    },
+    options: {}
+})
